@@ -1,0 +1,11 @@
+services:
+  mgi-access-mvp:
+    container_name: mgi-access-mvp
+    build: .
+    volumes:
+      - .:/code
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    command: poetry run watchmedo auto-restart --recursive --pattern="*.py;*.env;*.html;*.css;*.js" --directory="." python wallet_server.py
