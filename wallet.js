@@ -17,14 +17,28 @@ startButton.addEventListener("click", e => {
     fetch(serverURL + "/url").then(r => r.json()).then(body => {
         startButton.innerText = "In Progress...";
         transactionId = body["txid"];
+        /*
+        * The opener of MoneyGram's UI may use a popup, mobile webview, or browser tab.
+         */
         webview = window.open(body["url"], "webview", "width=500,height=800");
+        /*
+        * This is the key piece of client-side code. MoneyGram will make a postMessage request
+        * to the opener of the MoneyGram UI, signaling to the opener that the flow is complete
+        * and that the opener may close the MoneyGram UI.
+        *
+        * The body of the message is the same SEP-24 transaction object included in the response
+        * to `GET /transaction?id=`.
+        *
+        * https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage
+        * https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0024.md#transaction-history
+        *
+         */
         window.addEventListener("message", addSendButton);
     });
 });
 
 function addSendButton(_e) {
     sendButton.disabled = false;
-    console.log(webview);
     webview.close();
 }
 
