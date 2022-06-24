@@ -229,8 +229,9 @@ def poll_transaction_until_status(txid: str, until_status: str) -> dict:
     status = None
     while status != until_status:
         if first_iteration:
-            time.sleep(1)
             first_iteration = False
+        else:
+            time.sleep(1)
         query = f"{MGI_ACCESS_TRANSACTION_URL}?id={txid}"
         app.logger.info(f"making request: GET {query}")
         response = requests.get(
